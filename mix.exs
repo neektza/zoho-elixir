@@ -21,7 +21,7 @@ defmodule Zoho.Mixfile do
     [
       {:ibrowse, "~> 4.2"},
       {:httpotion, "~> 3.0.2"},
-      {:poison, "~> 3.1"}
+      {:poison, "~> 2.2"}
     ]
   end
 
