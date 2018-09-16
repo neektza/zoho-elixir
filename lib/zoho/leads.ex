@@ -2,27 +2,19 @@ defmodule Zoho.Leads do
 
   @loc "Leads"
   @resource Zoho.Lead
+  use Zoho.Resource
 
   def create_endpoint do
     "/#{@loc}/insertRecords?authtoken=#{auth_key()}&scope=crmapi&xmlData="
   end
 
-  def update_endpoint do
+  def update_endpoint(id) do
     "/#{@loc}/updateRecords?authtoken=#{auth_key()}&id=#{id}&scope=crmapi&xmlData="
   end
 
-  def insert(params\\%{}) do
-    raw_insert(params).data
-  end
 
   def update(id, params\\%{}) do
     update(id, params).data
-  end
-
-  def raw_insert(params\\%{}) do
-    build_post(@loc, create_endpoint(), params)
-    |> Zoho.get #[body: ""]
-    |> Zoho.Response.new(%{as: @resource})
   end
 
   def raw_update(id, params\\%{}) do
@@ -64,6 +56,4 @@ defmodule Zoho.Leads do
 
     example
   end
-
-  use Zoho.Resource
 end
