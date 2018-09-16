@@ -2,25 +2,33 @@ defmodule Zoho.Leads do
 
   @loc "Leads"
   @resource Zoho.Lead
-  use Zoho.Resource
 
+  def create_endpoint do
+    "/#{@loc}/insertRecords?authtoken=#{auth_key()}&scope=crmapi&xmlData="
+  end
 
-  #get example map for Leads post
-  def get_example do
+  def update_endpoint do
+    "/#{@loc}/updateRecords?authtoken=#{auth_key()}&id=#{id}&scope=crmapi&xmlData="
+  end
 
-    example = %{"Lead Source": "Web Download",
-     "Company": "Your Company",
-     "First Name": "Hannah",
-     "Last Name": "smith",
-     "Email": "testing@testing.com",
-     "Title": "Manager",
-     "Phone": "1234567890",
-     "Home Phone": "0987654321",
-     "Other Phone": "111",
-     "Fax": "222",
-     "Mobile": "123"}
+  def insert(params\\%{}) do
+    raw_insert(params).data
+  end
 
-    example
+  def update(id, params\\%{}) do
+    update(id, params).data
+  end
+
+  def raw_insert(params\\%{}) do
+    build_post(@loc, create_endpoint(), params)
+    |> Zoho.get #[body: ""]
+    |> Zoho.Response.new(%{as: @resource})
+  end
+
+  def raw_update(id, params\\%{}) do
+    build_post(@loc, update_endpoint(id), params)
+    |> Zoho.get #[body: ""]
+    |> Zoho.Response.new(%{as: @resource})
   end
 
   #clean up strange data format
@@ -38,4 +46,24 @@ defmodule Zoho.Leads do
      end
   end
 
+  #get example map for Leads post
+  def get_example do
+
+    example = %{
+      "Lead Source": "Web Download",
+     "Company": "Your Company",
+     "First Name": "Hannah",
+     "Last Name": "smith",
+     "Email": "testing@testing.com",
+     "Title": "Manager",
+     "Phone": "1234567890",
+     "Home Phone": "0987654321",
+     "Other Phone": "111",
+     "Fax": "222",
+     "Mobile": "123"}
+
+    example
+  end
+
+  use Zoho.Resource
 end
