@@ -16,6 +16,10 @@ defmodule Zoho.Resource do
         "/#{@loc}/insertRecords?authtoken=#{auth_key()}&scope=crmapi&xmlData="
       end
 
+      def updateendpoint(id) do
+        "/#{@loc}/updateRecords?authtoken=#{auth_key()}&id=#{id}&scope=crmapi&xmlData="
+      end
+
       def get(params\\%{}) do
         raw_get(params).data
       end
@@ -36,11 +40,21 @@ defmodule Zoho.Resource do
         |> Zoho.Response.new(%{as: @resource})
       end
 
+      def update(params\\%{}) do
+        raw_update(params).data
+      end
+
+      def raw_update(params\\%{}) do
+        build_post(@loc, updateendpoint(params["id"]), Map.drop(params, ["id"]))
+        |> Zoho.get #[body: ""]
+        |> Zoho.Response.new(%{as: @resource})
+      end
+
       defp build_post(loc, path, params) do
         start = "<#{loc}><row no='1'>"
         close = "</row></#{loc}>"
         values = Enum.map(params, fn({key, value}) -> "<FL val='#{key}'>#{value}</FL>" end) |> Enum.join
-        path <> URI.encode(start <> values <> close)
+        path <> URI.encode(start <> values <> close) |> IO.inspect
       end
 
       defp build_path(path, params) do
@@ -82,3 +96,4 @@ defmodule Zoho.Resource do
     end
   end
 end
+
