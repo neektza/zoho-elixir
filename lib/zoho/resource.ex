@@ -54,7 +54,7 @@ defmodule Zoho.Resource do
         start = "<#{loc}><row no='1'>"
         close = "</row></#{loc}>"
         values = Enum.map(params, fn({key, value}) -> "<FL val='#{key}'>#{value}</FL>" end) |> Enum.join
-        path <> URI.encode(start <> values <> close) |> IO.inspect
+        path <> URI.encode(start <> values <> close)
       end
 
       defp build_path(path, params) do
