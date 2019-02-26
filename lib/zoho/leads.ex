@@ -35,13 +35,15 @@ defmodule Zoho.Leads do
 
   def clean_result(data) do
     top = data.response["result"]["Leads"]["row"]
-    if is_list top do
-      data2 = top
-      data3 = Enum.map(data2, fn(y) -> Enum.map(y["FL"], fn(x) -> %{x["val"] => x["content"]} end) end)
-      Enum.map(data3, fn(y) -> Enum.reduce(y, %{}, fn (map, acc) -> Map.merge(acc, map) end) end)
-    else
-      data2 = top["FL"]
-      Enum.map(data2, fn(x) -> %{x["val"] => x["content"]} end)
+    cond do
+      is_list(top) ->
+        top
+        |> Enum.map(fn(y) -> Enum.map(y["FL"], fn(x) -> %{x["val"] => x["content"]} end) end)
+        |> Enum.map(fn(y) -> Enum.reduce(y, %{}, fn (map, acc) -> Map.merge(acc, map) end) end)
+      !is_nil(top["FL"]) ->
+        Enum.map(top["FL"], fn(x) -> %{x["val"] => x["content"]} end)
+      true ->
+        data.response
     end
   end
 
@@ -64,4 +66,5 @@ defmodule Zoho.Leads do
     example
   end
 end
+
 
